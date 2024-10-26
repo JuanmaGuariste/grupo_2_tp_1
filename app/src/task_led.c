@@ -43,6 +43,7 @@
 #include "board.h"
 #include "logger.h"
 #include "dwt.h"
+#include "task_led.h"
 
 /********************** macros and definitions *******************************/
 
@@ -53,16 +54,6 @@
 /********************** internal functions declaration ***********************/
 
 /********************** internal data definition *****************************/
-
-typedef enum
-{
-  LED_COLOR_NONE,
-  LED_COLOR_RED,
-  LED_COLOR_GREEN,
-  LED_COLOR_BLUE,
-  LED_COLOR_WHITE,
-  LED_COLOR__N,
-} led_color_t;
 
 /********************** external data definition *****************************/
 

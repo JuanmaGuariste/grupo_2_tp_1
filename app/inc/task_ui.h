@@ -41,17 +41,21 @@ extern "C" {
 #endif
 
 /********************** inclusions *******************************************/
-
+#include "task_button.h"
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
+typedef struct {
+    QueueHandle_t user_interface_queue;
+} ao_interface_t;
 
 /********************** external data declaration ****************************/
 
 /********************** external functions declaration ***********************/
 
 void task_ui(void* argument);
-
+void ao_ui_send_button_event(button_type_t button_event);
+void ao_ui_init(void);
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus
 }

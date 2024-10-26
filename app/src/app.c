@@ -61,6 +61,8 @@ SemaphoreHandle_t hsem_led;
 /********************** external functions definition ************************/
 void app_init(void)
 {
+  ao_ui_init();
+
   hsem_button = xSemaphoreCreateBinary();
   while(NULL == hsem_button)
   {
@@ -81,11 +83,11 @@ void app_init(void)
     // error
   }
 
-  status = xTaskCreate(task_ui, "task_ui", 128, NULL, tskIDLE_PRIORITY, NULL);
+  /*status = xTaskCreate(task_ui, "task_ui", 128, NULL, tskIDLE_PRIORITY, NULL);
   while (pdPASS != status)
   {
     // error
-  }
+  }*/
 
   status = xTaskCreate(task_led, "task_led", 128, NULL, tskIDLE_PRIORITY, NULL);
   while (pdPASS != status)

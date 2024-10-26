@@ -43,11 +43,13 @@
 #include "board.h"
 #include "logger.h"
 #include "dwt.h"
+#include "task_button.h"
+#include "task_ui.h"
 
 /********************** macros and definitions *******************************/
 
 /********************** internal data declaration ****************************/
-
+ao_interface_t queue_interface_handler;
 /********************** internal functions declaration ***********************/
 
 /********************** internal data definition *****************************/
@@ -60,15 +62,30 @@ extern SemaphoreHandle_t hsem_led;
 /********************** internal functions definition ************************/
 
 /********************** external functions definition ************************/
+void ao_ui_init(void)
+{
+  queue_interface_handler.user_interface_queue = xQueueCreate(1, sizeof(button_type_t));
+
+  xTaskCreate(task_ui,
+              "Button Task",
+              128, (void *)&queue_interface_handler,
+              tskIDLE_PRIORITY + 1,
+              NULL);
+}
+
+void ao_ui_send_button_event(button_type_t button_event) {
+  xQueueSend(queue_interface_handler.user_interface_queue,(void *)&button_event, portMAX_DELAY);
+}
 
 void task_ui(void *argument)
 {
+  button_type_t button_type;
   while (true)
   {
-    if(pdTRUE == xSemaphoreTake(hsem_button, portMAX_DELAY))
+    if(pdTRUE == xQueueReceive(queue_interface_handler.user_interface_queue,&button_type, portMAX_DELAY))
     {
-      LOGGER_INFO("ui led activate");
-      xSemaphoreGive(hsem_led);
+      LOGGER_INFO("ui led activate: %d", button_type);
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
   }
 }

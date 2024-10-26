@@ -45,6 +45,23 @@ extern "C" {
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
+typedef enum
+{
+  LED_COLOR_NONE,
+  LED_COLOR_RED,
+  LED_COLOR_GREEN,
+  LED_COLOR_BLUE,
+  LED_COLOR_WHITE,
+  LED_COLOR__N,
+} led_color_t;
+
+typedef struct {
+    led_color_t color;
+} ao_led_color_t;
+
+typedef struct {
+    QueueHandle_t led_interface;
+} ao_led_interface_t;
 
 /********************** external data declaration ****************************/
 

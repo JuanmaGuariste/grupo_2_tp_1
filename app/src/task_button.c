@@ -43,6 +43,8 @@
 #include "board.h"
 #include "logger.h"
 #include "dwt.h"
+#include "task_ui.h"
+#include "task_button.h"
 
 /********************** macros and definitions *******************************/
 
@@ -64,15 +66,6 @@
 extern SemaphoreHandle_t hsem_button;
 
 /********************** internal functions definition ************************/
-
-typedef enum
-{
-  BUTTON_TYPE_NONE,
-  BUTTON_TYPE_PULSE,
-  BUTTON_TYPE_SHORT,
-  BUTTON_TYPE_LONG,
-  BUTTON_TYPE__N,
-} button_type_t;
 
 static struct
 {
@@ -109,7 +102,6 @@ static button_type_t button_process_state_(bool value)
   }
   return ret;
 }
-
 /********************** external functions definition ************************/
 
 void task_button(void* argument)
@@ -123,24 +115,8 @@ void task_button(void* argument)
 
     button_type_t button_type;
     button_type = button_process_state_(button_state);
-
-    switch (button_type) {
-      case BUTTON_TYPE_NONE:
-        break;
-      case BUTTON_TYPE_PULSE:
-        LOGGER_INFO("button pulse");
-        xSemaphoreGive(hsem_button);
-        break;
-      case BUTTON_TYPE_SHORT:
-        LOGGER_INFO("button short");
-        break;
-      case BUTTON_TYPE_LONG:
-        LOGGER_INFO("button long");
-        break;
-      default:
-        LOGGER_INFO("button error");
-        break;
-    }
+    if (button_type != BUTTON_TYPE_NONE)
+    	ao_ui_send_button_event(button_type);
 
     vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
   }
