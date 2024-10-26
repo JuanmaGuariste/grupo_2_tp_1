@@ -73,6 +73,7 @@ void led_set_colors(bool r, bool g, bool b)
 
 void task_led(void *argument)
 {
+
   while (true)
   {
     led_color_t color;
@@ -81,9 +82,6 @@ void task_led(void *argument)
 
     switch (color)
     {
-      case LED_COLOR_NONE:
-        led_set_colors(false, false, false);
-        break;
       case LED_COLOR_RED:
         LOGGER_INFO("led red");
         led_set_colors(true, false, false);
@@ -105,6 +103,7 @@ void task_led(void *argument)
     }
 
     vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
+    led_set_colors(false, false, false);
   }
 }
 
