@@ -45,6 +45,7 @@
 #include "dwt.h"
 #include "task_button.h"
 #include "task_ui.h"
+#include "task_led.h"
 
 /********************** macros and definitions *******************************/
 
@@ -64,17 +65,22 @@ extern SemaphoreHandle_t hsem_led;
 /********************** external functions definition ************************/
 void ao_ui_init(void)
 {
-  queue_interface_handler.user_interface_queue = xQueueCreate(1, sizeof(button_type_t));
+  queue_interface_handler.user_interface_queue_event = xQueueCreate(1, sizeof(button_type_t));
+  queue_interface_handler.user_interface_queue_action = xQueueCreate(1, sizeof(led_color_t));
 
   xTaskCreate(task_ui,
               "Button Task",
-              128, (void *)&queue_interface_handler,
+              128, NULL,
               tskIDLE_PRIORITY + 1,
               NULL);
 }
 
 void ao_ui_send_button_event(button_type_t button_event) {
-  xQueueSend(queue_interface_handler.user_interface_queue,(void *)&button_event, portMAX_DELAY);
+  xQueueSend(queue_interface_handler.user_interface_queue_event,(void *)&button_event, portMAX_DELAY);
+}
+
+void ao_ui_receive_led_action(led_color_t *color) {
+  xQueueReceive(queue_interface_handler.user_interface_queue_action,(void *)color, portMAX_DELAY);
 }
 
 void task_ui(void *argument)
@@ -82,9 +88,26 @@ void task_ui(void *argument)
   button_type_t button_type;
   while (true)
   {
-    if(pdTRUE == xQueueReceive(queue_interface_handler.user_interface_queue,&button_type, portMAX_DELAY))
+    if(pdTRUE == xQueueReceive(queue_interface_handler.user_interface_queue_event,&button_type, portMAX_DELAY))
     {
       LOGGER_INFO("ui led activate: %d", button_type);
+      led_color_t color_to_send = LED_COLOR_NONE;
+      switch (button_type)
+      {
+      case BUTTON_TYPE_PULSE:
+        color_to_send = LED_COLOR_RED;
+        break;
+      case BUTTON_TYPE_SHORT:
+        color_to_send = LED_COLOR_GREEN;
+        break;
+      case BUTTON_TYPE_LONG:
+        color_to_send = LED_COLOR_BLUE;
+        break;
+      default:
+        break;
+      }
+      if (color_to_send != LED_COLOR_NONE)
+        xQueueSend(queue_interface_handler.user_interface_queue_action,(void *)&color_to_send, portMAX_DELAY);
       vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
   }

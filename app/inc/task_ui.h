@@ -42,20 +42,27 @@ extern "C" {
 
 /********************** inclusions *******************************************/
 #include "task_button.h"
+#include "task_led.h"
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
 typedef struct {
-    QueueHandle_t user_interface_queue;
+    QueueHandle_t user_interface_queue_event;
+    QueueHandle_t user_interface_queue_action;
 } ao_interface_t;
 
 /********************** external data declaration ****************************/
 
 /********************** external functions declaration ***********************/
-
+// tarea de recepción y dispatch de eventos
 void task_ui(void* argument);
+
+// Objeto activo de envio de eventos de boton
 void ao_ui_send_button_event(button_type_t button_event);
 void ao_ui_init(void);
+
+// Objeto activo de recepcion de acciones de leds
+void ao_ui_receive_led_action(led_color_t *color);
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus
 }

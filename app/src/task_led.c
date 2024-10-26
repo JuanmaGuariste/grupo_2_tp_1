@@ -76,14 +76,7 @@ void task_led(void *argument)
   {
     led_color_t color;
 
-    if(pdTRUE == xSemaphoreTake(hsem_led, 0))
-    {
-      color = LED_COLOR_RED;
-    }
-    else
-    {
-      color = LED_COLOR_NONE;
-    }
+    ao_ui_receive_led_action(&color);
 
     switch (color)
     {

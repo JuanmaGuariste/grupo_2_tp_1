@@ -56,10 +56,6 @@ typedef enum
 } led_color_t;
 
 typedef struct {
-    led_color_t color;
-} ao_led_color_t;
-
-typedef struct {
     QueueHandle_t led_interface;
 } ao_led_interface_t;
 
