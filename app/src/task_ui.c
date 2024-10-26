@@ -108,7 +108,6 @@ void task_ui(void *argument)
       }
       if (color_to_send != LED_COLOR_NONE)
         xQueueSend(queue_interface_handler.user_interface_queue_action,(void *)&color_to_send, portMAX_DELAY);
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
   }
 }

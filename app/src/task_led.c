@@ -44,6 +44,7 @@
 #include "logger.h"
 #include "dwt.h"
 #include "task_led.h"
+#include "task_ui.h"
 
 /********************** macros and definitions *******************************/
 
