@@ -99,9 +99,20 @@ void turn_on_led(led_color_t color)
     led_set_colors(false, false, false);
 }
 /*****************************************************************************/
-void handle_red_led_event(event_data_t event) { turn_on_led(LED_COLOR_RED); }
-void handle_green_led_event(event_data_t event) { turn_on_led(LED_COLOR_GREEN); }
-void handle_blue_led_event(event_data_t event) { turn_on_led(LED_COLOR_BLUE); }
+void handle_red_led_event(event_data_t event) {
+  LOGGER_INFO("Se ejecuta handle_red_led_event");
+  turn_on_led(LED_COLOR_RED);
+}
+
+void handle_green_led_event(event_data_t event) {
+  LOGGER_INFO("Se ejecuta handle_green_led_event");
+  turn_on_led(LED_COLOR_GREEN);
+}
+
+void handle_blue_led_event(event_data_t event) {
+  LOGGER_INFO("Se ejecuta handle_blue_led_event");
+  turn_on_led(LED_COLOR_BLUE);
+}
 
 void init_led_active_object(active_object_t *led_obj, void (*callback)(event_data_t), uint8_t priority) {
     led_obj->event_size = sizeof(button_event_t);

@@ -16,7 +16,8 @@ typedef void (*event_callback_t)(event_data_t event);
 typedef struct {
     QueueHandle_t event_queue;
     event_callback_t process_event;
-    size_t event_size;
+    uint8_t event_size;
+    uint8_t obj_id;
 } active_object_t;
 
 void active_object_init(active_object_t *obj, event_callback_t process_event, size_t queue_size);

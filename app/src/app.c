@@ -48,9 +48,14 @@
 
 /********************** macros and definitions *******************************/
 
-
 /********************** internal data declaration ****************************/
-
+  static active_object_t red_led_obj, green_led_obj, blue_led_obj, ui_interface;
+  static all_obt_t all_obj = {
+    .blue_led = &blue_led_obj,
+    .green_led = &green_led_obj,
+    .red_led = &red_led_obj,
+    .ui_obj = &ui_interface
+  };
 /********************** internal functions declaration ***********************/
 
 /********************** internal data definition *****************************/
@@ -60,20 +65,16 @@
 /********************** external functions definition ************************/
 void app_init(void)
 {
-  active_object_t red_led_obj, green_led_obj, blue_led_obj, ui_interface;
-
-  all_obt_t all_obj = {
-    .blue_led = &blue_led_obj,
-    .green_led = &green_led_obj,
-    .red_led = &red_led_obj,
-    .ui_obj = &ui_interface
-  };
-
+  // Inicialización para log
+  red_led_obj.obj_id = 1;
+  green_led_obj.obj_id = 2;
+  blue_led_obj.obj_id = 3;
+  ui_interface.obj_id = 4;
+  
   init_led_active_object(&red_led_obj, handle_red_led_event, 1);
   init_led_active_object(&green_led_obj, handle_green_led_event, 1);
   init_led_active_object(&blue_led_obj, handle_blue_led_event, 1);
   init_ui_active_object(&ui_interface, ui_process_event, 2);
-
 
   BaseType_t status;
 
