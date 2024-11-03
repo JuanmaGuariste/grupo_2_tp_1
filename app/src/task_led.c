@@ -55,6 +55,10 @@
 /********************** internal data declaration ****************************/
 
 /********************** internal functions declaration ***********************/
+static void led_set_blue(void);
+static void led_set_green(void);
+static void led_set_red(void);
+
 
 /********************** internal data definition *****************************/
 
@@ -99,19 +103,19 @@ void turn_on_led(led_color_t color)
     led_set_colors(false, false, false);
 }
 
-void led_set_blue(void) {
+static void led_set_blue(void) {
   HAL_GPIO_WritePin(LED_BLUE_PORT, LED_BLUE_PIN, GPIO_PIN_SET);
   vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
   HAL_GPIO_WritePin(LED_BLUE_PORT, LED_BLUE_PIN, GPIO_PIN_RESET);
 }
 
-void led_set_red(void) {
+static void led_set_red(void) {
   HAL_GPIO_WritePin(LED_RED_PORT, LED_RED_PIN, GPIO_PIN_SET);
   vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
   HAL_GPIO_WritePin(LED_RED_PORT, LED_RED_PIN, GPIO_PIN_RESET);
 }
 
-void led_set_green(void) {
+static void led_set_green(void) {
   HAL_GPIO_WritePin(LED_GREEN_PORT, LED_GREEN_PIN, GPIO_PIN_SET);
   vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
   HAL_GPIO_WritePin(LED_GREEN_PORT, LED_GREEN_PIN, GPIO_PIN_RESET);
