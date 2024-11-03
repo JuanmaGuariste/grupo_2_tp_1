@@ -45,6 +45,7 @@
 #include "dwt.h"
 #include "task_ui.h"
 #include "task_button.h"
+#include "ao.h"
 
 /********************** macros and definitions *******************************/
 
@@ -106,6 +107,13 @@ static button_type_t button_process_state_(bool value)
 
 void task_button(void* argument)
 {
+  all_obt_t *ui_interface = (all_obt_t *) argument;
+  button_event_t event;
+
+  event.blue_led_obj = ui_interface->blue_led;
+  event.green_led_obj = ui_interface->green_led;
+  event.red_led_obj = ui_interface->red_led;
+  
   button_init_();
 
   while(true)
@@ -113,10 +121,9 @@ void task_button(void* argument)
     GPIO_PinState button_state;
     button_state = HAL_GPIO_ReadPin(BUTTON_PORT, BUTTON_PIN);
 
-    button_type_t button_type;
-    button_type = button_process_state_(button_state);
-    if (button_type != BUTTON_TYPE_NONE)
-    	ao_ui_send_button_event(button_type);
+    event.type = button_process_state_(button_state);
+    if (event.type != BUTTON_TYPE_NONE)
+      active_object_send_event(ui_interface->ui_obj, &event);
 
     vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
   }

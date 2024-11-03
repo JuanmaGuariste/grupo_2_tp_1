@@ -45,6 +45,8 @@
 #include "dwt.h"
 #include "task_led.h"
 #include "task_ui.h"
+/*****************************************************************************/
+#include "ao.h"
 
 /********************** macros and definitions *******************************/
 
@@ -58,8 +60,6 @@
 
 /********************** external data definition *****************************/
 
-extern SemaphoreHandle_t hsem_led;
-
 /********************** internal functions definition ************************/
 
 void led_set_colors(bool r, bool g, bool b)
@@ -71,15 +71,8 @@ void led_set_colors(bool r, bool g, bool b)
 
 /********************** external functions definition ************************/
 
-void task_led(void *argument)
+void turn_on_led(led_color_t color)
 {
-
-  while (true)
-  {
-    led_color_t color;
-
-    ao_ui_receive_led_action(&color);
-
     switch (color)
     {
       case LED_COLOR_RED:
@@ -104,7 +97,15 @@ void task_led(void *argument)
 
     vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
     led_set_colors(false, false, false);
-  }
 }
+/*****************************************************************************/
+void handle_red_led_event(event_data_t event) { turn_on_led(LED_COLOR_RED); }
+void handle_green_led_event(event_data_t event) { turn_on_led(LED_COLOR_GREEN); }
+void handle_blue_led_event(event_data_t event) { turn_on_led(LED_COLOR_BLUE); }
 
+void init_led_active_object(active_object_t *led_obj, void (*callback)(event_data_t), uint8_t priority) {
+    led_obj->event_size = sizeof(button_event_t);
+    active_object_init(led_obj, callback, 5);
+    xTaskCreate(active_object_task, "LED_Task", configMINIMAL_STACK_SIZE, led_obj, priority, NULL);
+}
 /********************** end of file ******************************************/

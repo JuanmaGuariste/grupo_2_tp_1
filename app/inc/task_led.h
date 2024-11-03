@@ -41,7 +41,7 @@ extern "C" {
 #endif
 
 /********************** inclusions *******************************************/
-
+#include "ao.h"
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
@@ -63,8 +63,10 @@ typedef struct {
 
 /********************** external functions declaration ***********************/
 
-void task_led(void* argument);
-
+void handle_red_led_event(event_data_t event);
+void handle_green_led_event(event_data_t event);
+void handle_blue_led_event(event_data_t event);
+void init_led_active_object(active_object_t *led_obj, void (*callback)(event_data_t), uint8_t priority);
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus
 }

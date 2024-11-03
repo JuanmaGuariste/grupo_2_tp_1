@@ -46,70 +46,44 @@
 #include "task_button.h"
 #include "task_ui.h"
 #include "task_led.h"
-
+/*****************************************************************************/
+#include "ao.h"
 /********************** macros and definitions *******************************/
 
 /********************** internal data declaration ****************************/
-ao_interface_t queue_interface_handler;
+
 /********************** internal functions declaration ***********************/
 
 /********************** internal data definition *****************************/
 
 /********************** external data definition *****************************/
 
-extern SemaphoreHandle_t hsem_button;
-extern SemaphoreHandle_t hsem_led;
-
 /********************** internal functions definition ************************/
 
 /********************** external functions definition ************************/
-void ao_ui_init(void)
-{
-  queue_interface_handler.user_interface_queue_event = xQueueCreate(1, sizeof(button_type_t));
-  queue_interface_handler.user_interface_queue_action = xQueueCreate(1, sizeof(led_color_t));
 
-  xTaskCreate(task_ui,
-              "Button Task",
-              128, NULL,
-              tskIDLE_PRIORITY + 1,
-              NULL);
+/*************************************************************************** */
+void init_ui_active_object(active_object_t *ui_obj, void (*callback)(event_data_t), uint8_t priority) {
+    ui_obj->event_size = sizeof(button_event_t);
+    active_object_init(ui_obj, callback, 5);
+    xTaskCreate(active_object_task, "UI_Task", configMINIMAL_STACK_SIZE, ui_obj, priority, NULL);
 }
 
-void ao_ui_send_button_event(button_type_t button_event) {
-  xQueueSend(queue_interface_handler.user_interface_queue_event,(void *)&button_event, portMAX_DELAY);
-}
-
-void ao_ui_receive_led_action(led_color_t *color) {
-  xQueueReceive(queue_interface_handler.user_interface_queue_action,(void *)color, portMAX_DELAY);
-}
-
-void task_ui(void *argument)
-{
-  button_type_t button_type;
-  while (true)
-  {
-    if(pdTRUE == xQueueReceive(queue_interface_handler.user_interface_queue_event,&button_type, portMAX_DELAY))
-    {
-      LOGGER_INFO("ui led activate: %d", button_type);
-      led_color_t color_to_send = LED_COLOR_NONE;
-      switch (button_type)
-      {
+void ui_process_event(event_data_t event) {
+    button_event_t *button_event = (button_event_t *) event;
+    
+    switch (button_event->type) {
       case BUTTON_TYPE_PULSE:
-        color_to_send = LED_COLOR_RED;
+        active_object_send_event(button_event->red_led_obj, event);
         break;
       case BUTTON_TYPE_SHORT:
-        color_to_send = LED_COLOR_GREEN;
+        active_object_send_event(button_event->green_led_obj, event);
         break;
       case BUTTON_TYPE_LONG:
-        color_to_send = LED_COLOR_BLUE;
+        active_object_send_event(button_event->blue_led_obj, event);
         break;
       default:
         break;
-      }
-      if (color_to_send != LED_COLOR_NONE)
-        xQueueSend(queue_interface_handler.user_interface_queue_action,(void *)&color_to_send, portMAX_DELAY);
     }
-  }
 }
-
 /********************** end of file ******************************************/

@@ -44,6 +44,8 @@
 #include "task_led.h"
 #include "task_ui.h"
 
+#include "ao.h"
+
 /********************** macros and definitions *******************************/
 
 
@@ -55,41 +57,27 @@
 
 /********************** external data declaration *****************************/
 
-SemaphoreHandle_t hsem_button;
-SemaphoreHandle_t hsem_led;
-
 /********************** external functions definition ************************/
 void app_init(void)
 {
-  ao_ui_init();
+  active_object_t red_led_obj, green_led_obj, blue_led_obj, ui_interface;
 
-  hsem_button = xSemaphoreCreateBinary();
-  while(NULL == hsem_button)
-  {
+  all_obt_t all_obj = {
+    .blue_led = &blue_led_obj,
+    .green_led = &green_led_obj,
+    .red_led = &red_led_obj,
+    .ui_obj = &ui_interface
+  };
 
-  }
+  init_led_active_object(&red_led_obj, handle_red_led_event, 1);
+  init_led_active_object(&green_led_obj, handle_green_led_event, 1);
+  init_led_active_object(&blue_led_obj, handle_blue_led_event, 1);
+  init_ui_active_object(&ui_interface, ui_process_event, 2);
 
-  hsem_led = xSemaphoreCreateBinary();
-  while(NULL == hsem_led)
-  {
-
-  }
 
   BaseType_t status;
 
-  status = xTaskCreate(task_button, "task_button", 128, NULL, tskIDLE_PRIORITY, NULL);
-  while (pdPASS != status)
-  {
-    // error
-  }
-
-  /*status = xTaskCreate(task_ui, "task_ui", 128, NULL, tskIDLE_PRIORITY, NULL);
-  while (pdPASS != status)
-  {
-    // error
-  }*/
-
-  status = xTaskCreate(task_led, "task_led", 128, NULL, tskIDLE_PRIORITY, NULL);
+  status = xTaskCreate(task_button, "Button_Task", configMINIMAL_STACK_SIZE, &all_obj, 2, NULL);
   while (pdPASS != status)
   {
     // error
