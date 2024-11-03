@@ -12,15 +12,15 @@ void active_object_init(active_object_t *obj, event_callback_t process_event, si
     configASSERT(NULL != obj->event_queue);
     vQueueAddToRegistry(obj->event_queue, "Queue handle");
     obj->process_event = process_event;
-    LOGGER_INFO("Se inicializa el objeto activo id: %d, Tamaño del evento: %d",obj->obj_id, obj->event_size);
+//    LOGGER_INFO("Se inicializa el objeto activo id: %d, Tamaño del evento: %d",obj->obj_id, obj->event_size);
 }
 
 void active_object_send_event(active_object_t *obj, event_data_t event) {
     xQueueSend(obj->event_queue, event, 0);
-    LOGGER_INFO("Se envía un evento, objeto activo id: %d"
-                ", Tamaño del evento: %d",
-                obj->obj_id,
-                obj->event_size);
+//    LOGGER_INFO("Se envía un evento, objeto activo id: %d"
+//                ", Tamaño del evento: %d",
+//                obj->obj_id,
+//                obj->event_size);
 }
 
 void active_object_task(void *pv_parameters) {
@@ -29,11 +29,10 @@ void active_object_task(void *pv_parameters) {
 
     for (;;) {
         while (xQueueReceive(obj->event_queue, event, 0) == pdTRUE) {
-                LOGGER_INFO("Se recibe un evento, objeto activo id: %d"
-                ", Tamaño del evento: %d --> se despacha al handler correspondiente",
-                obj->obj_id,
-                obj->event_size);
-                
+//                LOGGER_INFO("Se recibe un evento, objeto activo id: %d"
+//                ", Tamaño del evento: %d --> se despacha al handler correspondiente",
+//                obj->obj_id,
+//                obj->event_size);
             obj->process_event(event);
         }
         vTaskDelay(pdMS_TO_TICKS(50));

@@ -73,27 +73,27 @@ void init_ui_active_object(active_object_t *ui_obj, void (*callback)(event_data_
 
 void ui_process_event(event_data_t event) {
     button_event_t *button_event = (button_event_t *) event;
-    char *handler_to_exec = NULL;
+//    char *handler_to_exec = NULL;
     
     switch (button_event->type) {
       case BUTTON_TYPE_PULSE:
         active_object_send_event(button_event->red_led_obj, event);
-        handler_to_exec = "button_event->red_led_obj";
+//        handler_to_exec = "button_event->red_led_obj";
         break;
       case BUTTON_TYPE_SHORT:
         active_object_send_event(button_event->green_led_obj, event);
-        handler_to_exec = "button_event->green_led_obj";
+//        handler_to_exec = "button_event->green_led_obj";
         break;
       case BUTTON_TYPE_LONG:
         active_object_send_event(button_event->blue_led_obj, event);
-        handler_to_exec = "button_event->blue_led_obj";
+//        handler_to_exec = "button_event->blue_led_obj";
         break;
       default:
         break;
     }
-  LOGGER_INFO("Se ejecuta ui_process_event button type: %d\n"
-              "handler a ejecutar: %s"
-              ,button_event->type
-              ,handler_to_exec);
+//  LOGGER_INFO("Se ejecuta ui_process_event button type: %d\n"
+//              "handler a ejecutar: %s"
+//              ,button_event->type
+//              ,handler_to_exec);
 }
 /********************** end of file ******************************************/
