@@ -47,7 +47,9 @@
 #include "ao.h"
 
 /********************** macros and definitions *******************************/
-
+#define LED_AO_TASK_PRIORITY (tskIDLE_PRIORITY + 1)
+#define UI_AO_TASK_PRIORITY (tskIDLE_PRIORITY + 1)
+#define BUTTON_TASK_PRIORITY (tskIDLE_PRIORITY + 1)
 /********************** internal data declaration ****************************/
   static active_object_t red_led_obj, green_led_obj, blue_led_obj, ui_interface;
   static all_obt_t all_obj = {
@@ -55,6 +57,13 @@
     .green_led = &green_led_obj,
     .red_led = &red_led_obj,
     .ui_obj = &ui_interface
+  };
+
+  enum {
+    RED_LED_AO_ID = 1,
+    GREEN_LED_AO_ID,
+    BLUE_LED_AO_ID,
+    UI_INTERFACE_AO_ID
   };
 /********************** internal functions declaration ***********************/
 
@@ -66,19 +75,19 @@
 void app_init(void)
 {
   // Inicialización para log
-  red_led_obj.obj_id = 1;
-  green_led_obj.obj_id = 2;
-  blue_led_obj.obj_id = 3;
-  ui_interface.obj_id = 4;
+  red_led_obj.obj_id = RED_LED_AO_ID;
+  green_led_obj.obj_id = GREEN_LED_AO_ID;
+  blue_led_obj.obj_id = BLUE_LED_AO_ID;
+  ui_interface.obj_id = UI_INTERFACE_AO_ID;
   
-  init_led_active_object(&red_led_obj, handle_red_led_event, 1);
-  init_led_active_object(&green_led_obj, handle_green_led_event, 1);
-  init_led_active_object(&blue_led_obj, handle_blue_led_event, 1);
-  init_ui_active_object(&ui_interface, ui_process_event, 2);
+  init_led_active_object(&red_led_obj, handle_red_led_event, LED_AO_TASK_PRIORITY);
+  init_led_active_object(&green_led_obj, handle_green_led_event, LED_AO_TASK_PRIORITY);
+  init_led_active_object(&blue_led_obj, handle_blue_led_event, LED_AO_TASK_PRIORITY);
+  init_ui_active_object(&ui_interface, ui_process_event, UI_AO_TASK_PRIORITY);
 
   BaseType_t status;
 
-  status = xTaskCreate(task_button, "Button_Task", configMINIMAL_STACK_SIZE, &all_obj, 2, NULL);
+  status = xTaskCreate(task_button, "Button_Task", configMINIMAL_STACK_SIZE, &all_obj, BUTTON_TASK_PRIORITY, NULL);
   while (pdPASS != status)
   {
     // error
