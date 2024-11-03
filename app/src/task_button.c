@@ -64,8 +64,6 @@
 
 /********************** external data definition *****************************/
 
-extern SemaphoreHandle_t hsem_button;
-
 /********************** internal functions definition ************************/
 
 static struct
