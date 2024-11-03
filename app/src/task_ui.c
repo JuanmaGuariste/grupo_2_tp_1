@@ -66,7 +66,9 @@
 void init_ui_active_object(active_object_t *ui_obj, void (*callback)(event_data_t), uint8_t priority) {
     ui_obj->event_size = (uint8_t)sizeof(button_event_t);
     active_object_init(ui_obj, callback, 5);
-    xTaskCreate(active_object_task, "UI_Task", configMINIMAL_STACK_SIZE, ui_obj, priority, NULL);
+    BaseType_t status;
+    status = xTaskCreate(active_object_task, "UI_Task", configMINIMAL_STACK_SIZE, ui_obj, priority, NULL);
+    configASSERT(pdPASS == status);
 }
 
 void ui_process_event(event_data_t event) {

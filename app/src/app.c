@@ -88,6 +88,7 @@ void app_init(void)
   BaseType_t status;
 
   status = xTaskCreate(task_button, "Button_Task", configMINIMAL_STACK_SIZE, &all_obj, BUTTON_TASK_PRIORITY, NULL);
+  configASSERT(pdPASS == status);
   while (pdPASS != status)
   {
     // error

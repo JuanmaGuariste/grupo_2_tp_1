@@ -135,6 +135,8 @@ void handle_blue_led_event(event_data_t event) {
 void init_led_active_object(active_object_t *led_obj, void (*callback)(event_data_t), uint8_t priority) {
     led_obj->event_size = sizeof(button_event_t);
     active_object_init(led_obj, callback, 5);
-    xTaskCreate(active_object_task, "LED_Task", configMINIMAL_STACK_SIZE, led_obj, priority, NULL);
+    BaseType_t status;
+    status = xTaskCreate(active_object_task, "LED_Task", configMINIMAL_STACK_SIZE, led_obj, priority, NULL);
+    configASSERT(pdPASS == status);
 }
 /********************** end of file ******************************************/

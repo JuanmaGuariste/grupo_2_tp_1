@@ -9,6 +9,8 @@
 
 void active_object_init(active_object_t *obj, event_callback_t process_event, size_t queue_size) {
     obj->event_queue = xQueueCreate(queue_size, obj->event_size);
+    configASSERT(NULL != obj->event_queue);
+    vQueueAddToRegistry(obj->event_queue, "Queue handle");
     obj->process_event = process_event;
     LOGGER_INFO("Se inicializa el objeto activo id: %d, Tamaño del evento: %d",obj->obj_id, obj->event_size);
 }
