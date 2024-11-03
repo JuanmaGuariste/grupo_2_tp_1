@@ -98,20 +98,38 @@ void turn_on_led(led_color_t color)
     vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
     led_set_colors(false, false, false);
 }
+
+void led_set_blue(void) {
+  HAL_GPIO_WritePin(LED_BLUE_PORT, LED_BLUE_PIN, GPIO_PIN_SET);
+  vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
+  HAL_GPIO_WritePin(LED_BLUE_PORT, LED_BLUE_PIN, GPIO_PIN_RESET);
+}
+
+void led_set_red(void) {
+  HAL_GPIO_WritePin(LED_RED_PORT, LED_RED_PIN, GPIO_PIN_SET);
+  vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
+  HAL_GPIO_WritePin(LED_RED_PORT, LED_RED_PIN, GPIO_PIN_RESET);
+}
+
+void led_set_green(void) {
+  HAL_GPIO_WritePin(LED_GREEN_PORT, LED_GREEN_PIN, GPIO_PIN_SET);
+  vTaskDelay((TickType_t)(TASK_PERIOD_MS_ / portTICK_PERIOD_MS));
+  HAL_GPIO_WritePin(LED_GREEN_PORT, LED_GREEN_PIN, GPIO_PIN_RESET);
+}
 /*****************************************************************************/
 void handle_red_led_event(event_data_t event) {
   LOGGER_INFO("Se ejecuta handle_red_led_event");
-  turn_on_led(LED_COLOR_RED);
+  led_set_red();
 }
 
 void handle_green_led_event(event_data_t event) {
   LOGGER_INFO("Se ejecuta handle_green_led_event");
-  turn_on_led(LED_COLOR_GREEN);
+  led_set_green();
 }
 
 void handle_blue_led_event(event_data_t event) {
   LOGGER_INFO("Se ejecuta handle_blue_led_event");
-  turn_on_led(LED_COLOR_BLUE);
+  led_set_blue();
 }
 
 void init_led_active_object(active_object_t *led_obj, void (*callback)(event_data_t), uint8_t priority) {
