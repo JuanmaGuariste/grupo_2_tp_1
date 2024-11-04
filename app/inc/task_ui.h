@@ -41,17 +41,24 @@ extern "C" {
 #endif
 
 /********************** inclusions *******************************************/
-
+#include "task_button.h"
+#include "task_led.h"
+#include "ao.h"
 /********************** macros ***********************************************/
 
 /********************** typedef **********************************************/
 
+typedef struct {
+    active_object_t *ui_obj;
+    active_object_t *red_led;
+    active_object_t *green_led;
+    active_object_t *blue_led;
+} all_obt_t;
 /********************** external data declaration ****************************/
 
 /********************** external functions declaration ***********************/
-
-void task_ui(void* argument);
-
+void init_ui_active_object(active_object_t *ui_obj, void (*callback)(event_data_t), uint8_t priority);
+void ui_process_event(event_data_t event);
 /********************** End of CPP guard *************************************/
 #ifdef __cplusplus
 }

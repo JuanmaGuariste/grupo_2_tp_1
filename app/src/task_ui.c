@@ -43,7 +43,11 @@
 #include "board.h"
 #include "logger.h"
 #include "dwt.h"
-
+#include "task_button.h"
+#include "task_ui.h"
+#include "task_led.h"
+/*****************************************************************************/
+#include "ao.h"
 /********************** macros and definitions *******************************/
 
 /********************** internal data declaration ****************************/
@@ -54,23 +58,42 @@
 
 /********************** external data definition *****************************/
 
-extern SemaphoreHandle_t hsem_button;
-extern SemaphoreHandle_t hsem_led;
-
 /********************** internal functions definition ************************/
 
 /********************** external functions definition ************************/
 
-void task_ui(void *argument)
-{
-  while (true)
-  {
-    if(pdTRUE == xSemaphoreTake(hsem_button, portMAX_DELAY))
-    {
-      LOGGER_INFO("ui led activate");
-      xSemaphoreGive(hsem_led);
-    }
-  }
+/*************************************************************************** */
+void init_ui_active_object(active_object_t *ui_obj, void (*callback)(event_data_t), uint8_t priority) {
+    ui_obj->event_size = (uint8_t)sizeof(button_event_t);
+    active_object_init(ui_obj, callback, 5);
+    BaseType_t status;
+    status = xTaskCreate(active_object_task, "UI_Task", configMINIMAL_STACK_SIZE, ui_obj, priority, NULL);
+    configASSERT(pdPASS == status);
 }
 
+void ui_process_event(event_data_t event) {
+    button_event_t *button_event = (button_event_t *) event;
+//    char *handler_to_exec = NULL;
+    
+    switch (button_event->type) {
+      case BUTTON_TYPE_PULSE:
+        active_object_send_event(button_event->red_led_obj, event);
+//        handler_to_exec = "button_event->red_led_obj";
+        break;
+      case BUTTON_TYPE_SHORT:
+        active_object_send_event(button_event->green_led_obj, event);
+//        handler_to_exec = "button_event->green_led_obj";
+        break;
+      case BUTTON_TYPE_LONG:
+        active_object_send_event(button_event->blue_led_obj, event);
+//        handler_to_exec = "button_event->blue_led_obj";
+        break;
+      default:
+        break;
+    }
+//  LOGGER_INFO("Se ejecuta ui_process_event button type: %d\n"
+//              "handler a ejecutar: %s"
+//              ,button_event->type
+//              ,handler_to_exec);
+}
 /********************** end of file ******************************************/
